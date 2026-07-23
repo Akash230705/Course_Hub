@@ -13,10 +13,6 @@ pipeline {
         maven 'maven'
     }
 
-    environment {
-        APP_NAME = "springboot-app"
-    }
-
     stages {
 
         stage('Build JAR') {
@@ -25,7 +21,7 @@ pipeline {
             }
             steps {
                 echo "Building Spring Boot JAR..."
-                sh 'mvn clean package'
+                sh 'mvn clean package -DskipTests'
             }
         }
 
@@ -35,6 +31,7 @@ pipeline {
             }
             steps {
                 echo "Deploying Docker Containers..."
+                sh 'docker compose down || true'
                 sh 'docker compose up --build -d'
             }
         }
@@ -44,21 +41,22 @@ pipeline {
                 expression { params.ACTION == 'REMOVE' }
             }
             steps {
-                echo "Stopping and Removing Containers..."
+                echo "Stopping Containers..."
                 sh 'docker compose down'
                 sh 'docker image prune -af'
             }
         }
     }
+
     post {
         success {
-            echo "Pipeline executed successfully..."
+            echo 'Pipeline executed successfully.'
         }
         failure {
-            echo "Pipeline execution failed..."
+            echo 'Pipeline execution failed.'
         }
         always {
-            echo "Pipeline completed..."
+            echo 'Pipeline completed.'
         }
     }
 }
