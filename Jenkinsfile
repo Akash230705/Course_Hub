@@ -18,6 +18,13 @@ pipeline {
     }
 
     stages {
+
+        stage('Clean Workspace') {
+            steps {
+                deleteDir()
+                    checkout scm
+                }
+            }
         stage('Build JAR') {
             when {
                 expression { params.ACTION == 'DEPLOY' }
