@@ -19,19 +19,13 @@ pipeline {
 
     stages {
 
-        stage('Clean Workspace') {
-            steps {
-                deleteDir()
-                    checkout scm
-                }
-            }
         stage('Build JAR') {
             when {
                 expression { params.ACTION == 'DEPLOY' }
             }
             steps {
                 echo "Building Spring Boot JAR..."
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn clean package'
             }
         }
 
