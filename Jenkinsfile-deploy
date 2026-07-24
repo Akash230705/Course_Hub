@@ -28,7 +28,7 @@ pipeline {
 
                     if(params.ACTION == "DEPLOY_APP") {
                         sh '''
-                        ansible kube_master -m shell -a "
+                        ansible dev -m shell -a "
                         kubectl apply -f /home/ansible/Course_Hub/deployment/app-deployment.yaml &&
                         kubectl apply -f /home/ansible/Course_Hub/deployment/app-service.yaml
                         "
@@ -37,7 +37,7 @@ pipeline {
 
                     else if(params.ACTION == "REMOVE_APP") {
                         sh '''
-                        ansible kube_master -m shell -a "
+                        ansible dev -m shell -a "
                         kubectl delete -f /home/ansible/Course_Hub/deployment/app-deployment.yaml --ignore-not-found=true &&
                         kubectl delete -f /home/ansible/Course_Hub/deployment/app-service.yaml --ignore-not-found=true
                         "
@@ -46,7 +46,7 @@ pipeline {
 
                     else if(params.ACTION == "DEPLOY_DB") {
                         sh '''
-                        ansible kube_master -m shell -a "
+                        ansible dev -m shell -a "
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pv.yaml &&
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pvc.yaml &&
                         kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-service.yaml &&
@@ -57,7 +57,7 @@ pipeline {
 
                     else if(params.ACTION == "REMOVE_DB") {
                         sh '''
-                        ansible kube_master -m shell -a "
+                        ansible dev -m shell -a "
                         kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yaml --ignore-not-found=true &&
                         kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-service.yaml --ignore-not-found=true &&
                         kubectl delete -f /home/ansible/Course_Hub/deployment/pvc.yaml --ignore-not-found=true &&
