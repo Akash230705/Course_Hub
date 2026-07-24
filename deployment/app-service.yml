@@ -1,14 +1,15 @@
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-service
+  name: mysql
   namespace: production
+
 spec:
-  type: NodePort
+  clusterIP: None
+
   selector:
-    app: springboot-app
+    app: mysql
+
   ports:
-  - port: 80
-    targetPort: 8080
-    nodePort: 30080
+    - port: 3306
+      targetPort: 3306
