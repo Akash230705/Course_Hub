@@ -15,6 +15,18 @@ pipeline {
     }
 
     stages {
+
+        stage('Configure Proxy') {
+                
+            steps {
+                sh '''
+                ansible-playbook \
+                -i inventory \
+                /home/ansible/Course_Hub/proxy-setup.yml
+                '''
+            }
+        }
+
         stage('Execute') {
             steps {
                 script {
