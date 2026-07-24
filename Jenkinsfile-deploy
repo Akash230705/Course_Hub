@@ -12,12 +12,6 @@ pipeline {
             ],
             description: 'Choose Action'
         )
-
-        string(
-            name: 'IMAGE_TAG',
-            defaultValue: 'latest',
-            description: 'Docker image tag'
-        )
     }
 
     stages {
@@ -25,29 +19,22 @@ pipeline {
             steps {
                 script {
                     if(params.ACTION=="DEPLOY_APP") {
-                        sh """
-                        ansible dev -m shell -a '
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/namespace.yml
-
-                        kubectl set image deployment/springboot-app \
-                        springboot-app=akash2316/springboot-app:${IMAGE_TAG} \
-                        -n production
-
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-service.yml
-                        '
-                        """
-                    }
-
-                    else if(params.ACTION=="REMOVE_APP") {
                         sh '''
                         ansible dev -m shell -a "
-                        kubectl delete deployment springboot-app \
-                        -n production \
-                        --ignore-not-found=true
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/namespace.yml &&
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-deployment.yml &&
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-service.yml &&
+                        kubectl rollout restart deployment/springboot-app -n production &&
+                        kubectl rollout status deployment/springboot-app -n production
+                        "
+                        '''
+                    }
 
-                        kubectl delete service springboot-service \
-                        -n production \
-                        --ignore-not-found=true
+                    else if (params.ACTION == "REMOVE_APP") {
+                        sh '''
+                        ansible dev -m shell -a "
+                        kubectl delete deployment springboot-app -n production --ignore-not-found=true &&
+                        kubectl delete service springboot-service -n production --ignore-not-found=true
                         "
                         '''
                     }
