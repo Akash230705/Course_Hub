@@ -1,5 +1,11 @@
 pipeline {
     agent any
+    
+    tools {
+            maven 'Maven'
+            jdk 'JDK21'
+        }
+
     environment {
         IMAGE_NAME="akash2316/springboot-app"
         TAG="${BUILD_NUMBER}"
