@@ -1,51 +1,58 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'maven'
-    }
-
     parameters {
         choice(
-        name: 'ACTION',
-        choices: [
-            'DEPLOY_APP',
-            'REMOVE_APP',
-            'DEPLOY_DB',
-            'REMOVE_DB'
-        ],
-        description: 'Choose Action'
+            name: 'ACTION',
+            choices: [
+                'DEPLOY_APP',
+                'REMOVE_APP',
+                'DEPLOY_DB',
+                'REMOVE_DB'
+            ],
+            description: 'Choose Action'
+        )
+
+        string(
+            name: 'IMAGE_TAG',
+            defaultValue: 'latest',
+            description: 'Docker image tag'
         )
     }
 
     stages {
-
         stage('Execute') {
-
             steps {
-
                 script {
-
                     if(params.ACTION=="DEPLOY_APP") {
-                        sh '''
-                        ansible dev -m shell -a "
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/namespace.yml &&
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-deployment.yml &&
+                        sh """
+                        ansible dev -m shell -a '
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/namespace.yml
+
+                        kubectl set image deployment/springboot-app \
+                        springboot-app=akash2316/springboot-app:${IMAGE_TAG} \
+                        -n production
+
                         kubectl apply -f /home/ansible/Course_Hub/deployment/app-service.yml
-                        "
-                        '''
+                        '
+                        """
                     }
 
                     else if(params.ACTION=="REMOVE_APP") {
                         sh '''
                         ansible dev -m shell -a "
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/app-deployment.yml --ignore-not-found=true &&
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/app-service.yml --ignore-not-found=true
+                        kubectl delete deployment springboot-app \
+                        -n production \
+                        --ignore-not-found=true
+
+                        kubectl delete service springboot-service \
+                        -n production \
+                        --ignore-not-found=true
                         "
                         '''
                     }
 
-                    else if(params.ACTION == "DEPLOY_DB") {
+                    else if(params.ACTION=="DEPLOY_DB") {
                         sh '''
                         ansible dev -m shell -a "
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pv.yml &&
@@ -65,24 +72,9 @@ pipeline {
                         kubectl delete -f /home/ansible/Course_Hub/deployment/pv.yml --ignore-not-found=true
                         "
                         '''
-                        }
-                }
-
-            }
-            post {
-                success {
-                    echo "Deployment completed successfully."
-                }
-                failure {
-                    echo "Deployment failed."
-                }
-                always {
-                    echo "Pipeline execution finished."
+                    }
                 }
             }
-
         }
-
     }
-
-}   
+}
