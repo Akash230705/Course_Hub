@@ -41,6 +41,7 @@ pipeline {
 
                     else if(params.ACTION=="DEPLOY_DB") {
                         sh '''
+                        scp -r deployment ansible@172.31.30.60:/home/ansible/Course_Hub/
                         ansible dev -m shell -a "
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pv.yml &&
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pvc.yml &&
