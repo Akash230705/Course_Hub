@@ -1,10 +1,9 @@
 pipeline {
     agent any
-    
+
     tools {
-            maven 'Maven'
-            jdk 'JDK21'
-        }
+        maven 'maven'
+    }
 
     environment {
         IMAGE_NAME="akash2316/springboot-app"
