@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+    parameters {
+        choice(
+        name: 'ACTION',
+        choices: [
+            'DEPLOY_APP',
+            'REMOVE_APP',
+            'DEPLOY_DB',
+            'REMOVE_DB'
+        ],
+        description: 'Choose Action'
+        )
+    }
+
+    stages {
+
+        stage('Execute') {
+
+            steps {
+
+                script {
+
+                    if(params.ACTION=="DEPLOY_APP"){
+                        sh 'kubectl apply -f deployment/app-deployment.yaml'
+                        sh 'kubectl apply -f deployment/app-service.yaml'
+                    }
+
+                    if(params.ACTION=="REMOVE_APP"){
+                        sh 'kubectl delete -f deployment/app-deployment.yaml'
+                        sh 'kubectl delete -f deployment/app-service.yaml'
+                    }
+
+                    if(params.ACTION=="DEPLOY_DB"){
+                        sh 'kubectl apply -f deployment/pv.yaml'
+                        sh 'kubectl apply -f deployment/pvc.yaml'
+                        sh 'kubectl apply -f deployment/mysql-service.yaml'
+                        sh 'kubectl apply -f deployment/mysql-statefulset.yaml'
+                    }
+
+                    if(params.ACTION=="REMOVE_DB"){
+                        sh 'kubectl delete -f deployment/mysql-statefulset.yaml --ignore-not-found=true'
+                        sh 'kubectl delete -f deployment/mysql-service.yaml --ignore-not-found=true'
+                        sh 'kubectl delete -f deployment/pvc.yaml --ignore-not-found=true'
+                        sh 'kubectl delete -f deployment/pv.yaml --ignore-not-found=true'
+                    }
+
+                }
+
+            }
+            post {
+                success {
+                    echo "Deployment completed successfully."
+                }
+                failure {
+                    echo "Deployment failed."
+                }
+                always {
+                    echo "Pipeline execution finished."
+                }
+            }
+
+        }
+
+    }
+
+}   
