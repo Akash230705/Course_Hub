@@ -1,0 +1,122 @@
+pipeline {
+    agent any
+    environment {
+        IMAGE_NAME="akash2316/springboot-app"
+        TAG="${BUILD_NUMBER}"
+    }
+    
+    stages {
+        stage('Git Checkout') {
+            steps {
+                git branch: 'main',url: 'https://github.com/Akash230705/Course_Hub.git'
+            }
+            post{
+                success{
+                    echo "pull success"
+                }
+                failure{
+                    echo "pull failed"
+                }
+                always{
+                    echo "I am in git checkout"
+                }
+            }
+        }
+    
+        stage('Build Jar') {
+            steps {
+                sh 'mvn clean package -DskipTests'
+            }
+            post{
+                success{
+                    echo "jar success"
+                }
+                failure{
+                    echo "jar failed"
+                }
+                always{
+                    echo "I am in jar"
+                }
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t $IMAGE_NAME:$TAG ."
+            }
+            post{
+                success{
+                    echo "image success"
+                }
+                failure{
+                    echo "image failed"
+                }
+                always{
+                    echo "I am in image"
+                }
+            }
+        }
+        
+        stage('Docker Login') {
+        
+            steps {
+            
+                withCredentials([usernamePassword(credentialsId: 'dockerhub',
+                
+                usernameVariable: 'USER',
+                
+                passwordVariable: 'PASS')]) {
+                
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
+                }   
+            }
+            post{
+                success{
+                    echo "hub success"
+                }
+                failure{
+                    echo "hub failed"
+                }
+                always{
+                    echo "I am in hub"
+                }
+            }
+        }
+        
+        stage('Push Image') {
+            steps {
+                sh "docker push $IMAGE_NAME:$TAG"
+            }
+            post{
+                success{
+                    echo "push success"
+                }
+                failure{
+                    echo "push failed"
+                }
+                always{
+                    echo "I am in push"
+                }
+            }
+        }
+    
+        stage('Cleanup') {
+            steps {
+                sh 'docker image prune -af'
+            }
+            post{
+                success{
+                    echo "clean success"
+                }
+                failure{
+                    echo "clean failed"
+                }
+                always{
+                    echo "I am in clean"
+                }
+            }
+        }
+    }
+}
+
+
