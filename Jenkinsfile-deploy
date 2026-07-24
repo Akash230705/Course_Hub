@@ -46,7 +46,7 @@ pipeline {
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pv.yml &&
                         kubectl apply -f /home/ansible/Course_Hub/deployment/pvc.yml &&
                         kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-service.yml &&
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-staefulset.yml
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yml
                         "
                         '''
                     }
@@ -54,7 +54,7 @@ pipeline {
                     else if(params.ACTION=="REMOVE_DB") {
                         sh '''
                         ansible dev -m shell -a "
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-staefulset.yml --ignore-not-found=true &&
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yml --ignore-not-found=true &&
                         kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-service.yml --ignore-not-found=true &&
                         kubectl delete -f /home/ansible/Course_Hub/deployment/pvc.yml --ignore-not-found=true &&
                         kubectl delete -f /home/ansible/Course_Hub/deployment/pv.yml --ignore-not-found=true
