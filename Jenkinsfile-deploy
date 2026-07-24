@@ -28,7 +28,7 @@ pipeline {
 
                     if(params.ACTION=="DEPLOY_APP"){
                         sh """
-                        ssh ubuntu@ip-172-31-30-60 '
+                        ssh ansible@172.31.30.60 '
                         kubectl apply -f /home/ubuntu/Course_Hub/deployment/app-deployment.yaml
                         kubectl apply -f /home/ubuntu/Course_Hub/deployment/app-service.yaml
                         '
@@ -37,7 +37,7 @@ pipeline {
 
                     if(params.ACTION=="REMOVE_APP"){
                         sh """
-                            ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-30-60 '
+                            ssh -o StrictHostKeyChecking=no ansible@172.31.30.60 '
                                 kubectl delete -f /home/ubuntu/Course_Hub/deployment/app-deployment.yaml --ignore-not-found=true
                                 kubectl delete -f /home/ubuntu/Course_Hub/deployment/app-service.yaml --ignore-not-found=true
                             '
@@ -46,7 +46,7 @@ pipeline {
 
                     if(params.ACTION=="DEPLOY_DB"){
                         sh """
-                            ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-30-60 '
+                            ssh -o StrictHostKeyChecking=no ansible@172.31.30.60 '
                                 kubectl apply -f /home/ubuntu/Course_Hub/deployment/pv.yaml
                                 kubectl apply -f /home/ubuntu/Course_Hub/deployment/pvc.yaml
                                 kubectl apply -f /home/ubuntu/Course_Hub/deployment/mysql-service.yaml
@@ -57,7 +57,7 @@ pipeline {
 
                     if(params.ACTION=="REMOVE_DB"){
                         sh """
-                            ssh -o StrictHostKeyChecking=no ubuntu@ip-172-31-30-60 '
+                            ssh -o StrictHostKeyChecking=no ansible@172.31.30.60 '
                                 kubectl delete -f /home/ubuntu/Course_Hub/deployment/mysql-statefulset.yaml --ignore-not-found=true
                                 kubectl delete -f /home/ubuntu/Course_Hub/deployment/mysql-service.yaml --ignore-not-found=true
                                 kubectl delete -f /home/ubuntu/Course_Hub/deployment/pvc.yaml --ignore-not-found=true
