@@ -30,8 +30,8 @@ pipeline {
                         sh '''
                         scp -r deployment ansible@172.31.30.60:/home/ansible/Course_Hub/
                         ansible dev -m shell -a "
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-deployment.yaml &&
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-service.yaml
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-deployment.yml &&
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/app-service.yml
                         "
                         '''
                     }
@@ -41,8 +41,8 @@ pipeline {
                         scp -r deployment ansible@172.31.30.60:/home/ansible/Course_Hub/
 
                         ansible dev -m shell -a "
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/app-deployment.yaml --ignore-not-found=true &&
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/app-service.yaml --ignore-not-found=true
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/app-deployment.yml --ignore-not-found=true &&
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/app-service.yml --ignore-not-found=true
                         "
                         '''
                     }
@@ -51,10 +51,10 @@ pipeline {
                         sh '''
                         scp -r deployment ansible@172.31.30.60:/home/ansible/Course_Hub/
                         ansible dev -m shell -a "
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/pv.yaml &&
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/pvc.yaml &&
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-service.yaml &&
-                        kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yaml
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/pv.yml &&
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/pvc.yml &&
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-service.yml &&
+                        kubectl apply -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yml
                         "
                         '''
                     }
@@ -63,10 +63,10 @@ pipeline {
                         sh '''
                         scp -r deployment ansible@172.31.30.60:/home/ansible/Course_Hub/
                         ansible dev -m shell -a "
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yaml --ignore-not-found=true &&
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-service.yaml --ignore-not-found=true &&
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/pvc.yaml --ignore-not-found=true &&
-                        kubectl delete -f /home/ansible/Course_Hub/deployment/pv.yaml --ignore-not-found=true
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-statefulset.yml --ignore-not-found=true &&
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/mysql-service.yml --ignore-not-found=true &&
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/pvc.yml --ignore-not-found=true &&
+                        kubectl delete -f /home/ansible/Course_Hub/deployment/pv.yml --ignore-not-found=true
                         "
                         '''
                     }
